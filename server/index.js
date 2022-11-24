@@ -1,21 +1,53 @@
-const express = require('express');
+"use strict";
+
+// import the needed node_modules.
+const express = require("express");
+const morgan = require("morgan");
 const helmet = require('helmet');
-const morgan = require ('morgan');
 
 const port = 8000;
 
-express ()
 
-    .use(express.json())
+const {
+    getHomepage,
+    getMovie,
+    getCast, 
+    Search,
 
+} = require("./handlers");
+
+express()
+    // Below are methods that are included in express(). We chain them for convenience.
+    // --------------------------------------------------------------------------------
     .use(helmet())
 
-    .use(morgan('tiny'))
+    // This will give us will log more info to the console. see https://www.npmjs.com/package/morgan
     
-    .get('/hello', (req, res) => {
-    res.status(200).json({status: 200, message: "Hello World!"})
-})
+    .use(morgan("tiny"))
+    .use(express.json())
 
+    // Any requests for static files will go into the public folder
+    .use(express.static("public"))
+
+    // Endpoints
+    // ---------------------------------
+    
+    .get("/", getHomepage)
+    .get ("/Movie/:MovieId", getMovie)
+    .get ("/Cast/:CastId", getCast)
+    .get ("/search", Search)
+
+    // ---------------------------------
+
+    // this is our catch all endpoint.
+    .get("*", (req, res) => {
+        res.status(404).json({
+        status: 404,
+        message: "error page",
+        });
+    })
+
+    // Node spins up our server and sets it to listen on port 8000.
     .listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-})
+        console.log(`Example app listening on port ${port}`)
+    })

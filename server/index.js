@@ -8,13 +8,19 @@ const helmet = require('helmet');
 const port = 8000;
 
 
+
 const {
     getHomepage,
     getMovie,
     getCast, 
     Search,
+    updateUsers,
+    postFavMovie,
+    getFavMovie,
+    patchFavMovie
 
 } = require("./handlers");
+
 
 express()
     // Below are methods that are included in express(). We chain them for convenience.
@@ -32,11 +38,13 @@ express()
     // Endpoints
     // ---------------------------------
     
-    .get("/", getHomepage)
+    .get("/api/", getHomepage)
     .get ("/Movie/:MovieId", getMovie)
     .get ("/Cast/:CastId", getCast)
     .get ("/search", Search)
-
+    .get("/get-fav-movie/:UserId",getFavMovie)
+    .post ("/add-fav-movie",postFavMovie)
+    .patch ("/update-fav-movie",patchFavMovie)
     // ---------------------------------
 
     // this is our catch all endpoint.
@@ -51,3 +59,7 @@ express()
     .listen(port, () => {
         console.log(`Example app listening on port ${port}`)
     })
+    setInterval(updateUsers, 1000);
+    
+    
+    

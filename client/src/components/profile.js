@@ -29,18 +29,7 @@ const Profile = () => {
                     <h5> @{user.nickname}</h5>
                 </div>
         {/* ----------------------------------------------------- */}
-                <div>
-                    {
-                        !favmovie
-                        ? <></>
-                        : favmovie?.map (movie=>{
-                            return(
-                                <p>{movie.original_title}</p>
-                            )
-                        })
-                        
-                    } 
-                </div>
+                
             </>
         )
         

@@ -21,7 +21,6 @@ const SearchBar = () => {
                 ? <></>
                 :search?.results?.map(Element=>{
                     return(
-                    // change p > link
                     <p onClick={()=> navigate(`/Movie/${Element.id}`)}>
                         {Element.original_title}
                     </p>
@@ -39,10 +38,29 @@ position: relative;
 display: inline-block;
 margin-bottom:10%;
 input{
-    width: 100%;
+    width: 675px;
+    height: 20px;
+    position: relative;
+    left: 75%;
+    background-color: white;
+    border: 1mm;
+    border-radius: 5px;
+    text-align: center;
 }
 img{
     width: 150px;
+}
+.autocom-box {
+    position: absolute;
+    left: 75.5%;
+    top:115%;
+    background-color: grey;
+    width: 675px;
+    z-index: 1;
+    border-radius: 2px;
+}
+p{
+    text-align: center;
 }
 
 

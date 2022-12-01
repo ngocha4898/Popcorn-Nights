@@ -1,12 +1,13 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import CastPage from "./CastPage";
+import FilteredBox from "./FilteredBox";
 import GlobalStyles from "./GlobalStyles";
 import Homepage from "./Homepage";
 import LoginButton from "./login";
 import LogoutButton from "./logout";
 import MoviePage from "./MoviePage";
 import NavBar from "./NavBar";
-import Profile from "./profile";
+import UserProfile from "./UserProfile";
 
 const App=() => {
     return (
@@ -18,6 +19,7 @@ const App=() => {
                         <Route path="/" element={
                                 <>
                                     <NavBar/>
+                                    <FilteredBox/>
                                     <Homepage/>
                                 </>}/>
                         <Route path="/Movie/:MovieId" element={
@@ -32,7 +34,7 @@ const App=() => {
                                 </>}/>
                         <Route path="/profile" element={<>
                         <NavBar/>
-                        <Profile/>
+                        <UserProfile/>
                         </>} />
                         <Route path="" element={<h1>404: Oops!</h1>} />
                     </Routes>

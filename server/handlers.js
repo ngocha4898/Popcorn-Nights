@@ -1,6 +1,8 @@
 "use strict";
 const e = require("express");
 const { MongoClient } = require("mongodb");
+const { v4: uuidv4 } = require('uuid');
+
 
 require("dotenv").config();
 const { MONGO_URI } = process.env;
@@ -16,8 +18,7 @@ const getHomepage = async (req, res) => {
         let requestOptions = {
             method: 'GET',
             redirect: 'follow'
-        };
-        
+        };  
         fetch(`https://api.themoviedb.org/3/movie/popular?api_key=b2f7fd90221fb42dc91643e47e29b782&language=en-US&page=${page}`, requestOptions)
             .then(response => response.text())
             .then(result => {
@@ -213,8 +214,308 @@ const postFavMovie = async(req,res) => {
 }
 //-----------------------------------------------------
 
+//get bookmark movie list
+const getBookmarkMovie = async (req,res) => {
+    const user_id = req.params.UserId
+    let requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+    };
+    try{
+        const client = new MongoClient(MONGO_URI, options);
+        await client.connect();
+        const db = client.db("Popcorn");
+        console.log("connected!");
+        const query = {user_id : user_id };
+        const {bookmark_movie} = await db.collection("Record").findOne(query)
+        let data = []
+        if(bookmark_movie)
+        {
+            for (let index = 0; index < bookmark_movie.length; index++) {
+                const movieID = bookmark_movie[index];
+                let movieInfo = await fetch(`https://api.themoviedb.org/3/movie/${movieID}?api_key=b2f7fd90221fb42dc91643e47e29b782&language=en-US`, requestOptions)
+                movieInfo = await movieInfo.text()
+                movieInfo = JSON.parse(movieInfo)
+        
+                data.push(movieInfo)
+                
+            }
+        }
+        
+
+        res.status(200).json({ status: 200, message: "success", data: data });
+        client.close();
+        console.log("disconnected!");
+    }  catch (err) {
+    res.status(404).json({ status: 404, message: err.stack });
+    }
+}
+//-----------------------------------------------------
+
+//add bookmark movie list
+const postBookmarkMovie = async (req,res) => {
+    let {movie_id,user_id} = req.body
+    try {
+        const client = new MongoClient(MONGO_URI, options);
+        await client.connect();
+        const db = client.db("Popcorn");
+        console.log("connected!");
+
+        const query = {user_id : user_id };
+        const {bookmark_movie} = await db.collection("Record").findOne(query)
+        if(bookmark_movie ===undefined)
+        {
+            let pushArr = [movie_id]
+            const newValues = { $set: { bookmark_movie : pushArr } }
+            await db.collection("Record").updateOne(
+                query,
+                newValues)
+        }
+        else
+        {    
+            bookmark_movie.push(movie_id)
+            const newValues = { $set: { bookmark_movie : bookmark_movie } }
+            await db.collection("Record").updateOne(
+                query,
+                newValues)
+            res.status(200).json({ status: 200, message: "success", data: await db.collection("Record").findOne(query)});
+        }
+            client.close();
+            console.log("disconnected!");
+    }  catch (err) {
+            res.status(404).json({ status: 404, message: err.stack });
+        }
+}
+//-----------------------------------------------------
+
+//update bookmark movie list
+const patchBookmarkMovie = async (req,res) => {
+    let {movie_id,user_id} = req.body
+    try {
+        const client = new MongoClient(MONGO_URI, options);
+        await client.connect();
+        const db = client.db("Popcorn");
+        console.log("connected!");
+        const query = {user_id : user_id };
+        const {bookmark_movie} = await db.collection("Record").findOne(query)
+        console.log(bookmark_movie)
+        let data = bookmark_movie.filter(object => {
+            return !(object== movie_id);
+        });
+        const newValues = { $set: { bookmark_movie : data } }
+        await db.collection("Record").updateOne(
+            query,
+            newValues)
+        res.status(200).json({ status: 200, message: "success", data: await db.collection("Record").findOne(query) 
+    });
+            client.close();
+            console.log("disconnected!");
+    }  catch (err) {
+            res.status(404).json({ status: 404, message: err.stack });
+        }
+}
+//-----------------------------------------------------
+
+//get watched movie list
+const getWatchedMovie = async (req,res) => {
+    const user_id = req.params.UserId
+    let requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+    };
+    try{
+        const client = new MongoClient(MONGO_URI, options);
+        await client.connect();
+        const db = client.db("Popcorn");
+        console.log("connected!");
+        const query = {user_id : user_id };
+        const {watched_movie} = await db.collection("Record").findOne(query)
+        let data = []
+        if(watched_movie)
+        {
+            for (let index = 0; index < watched_movie.length; index++) {
+                const movieID = watched_movie[index];
+                let movieInfo = await fetch(`https://api.themoviedb.org/3/movie/${movieID}?api_key=b2f7fd90221fb42dc91643e47e29b782&language=en-US`, requestOptions)
+                movieInfo = await movieInfo.text()
+                movieInfo = JSON.parse(movieInfo)
+        
+                data.push(movieInfo)
+                
+            }
+        }
+        
+
+        res.status(200).json({ status: 200, message: "success", data: data });
+        client.close();
+        console.log("disconnected!");
+    }  catch (err) {
+    res.status(404).json({ status: 404, message: err.stack });
+    }
+}
+//-----------------------------------------------------
+
+//add watched movie list
+const postWatchedMovie = async (req,res) => {
+    let {movie_id,user_id} = req.body
+    try {
+        const client = new MongoClient(MONGO_URI, options);
+        await client.connect();
+        const db = client.db("Popcorn");
+        console.log("connected!");
+
+        const query = {user_id : user_id };
+        const {watched_movie} = await db.collection("Record").findOne(query)
+        if(watched_movie ===undefined)
+        {
+            let pushArr = [movie_id]
+            const newValues = { $set: { watched_movie : pushArr } }
+            await db.collection("Record").updateOne(
+                query,
+                newValues)
+        }
+        else
+        {    
+            watched_movie.push(movie_id)
+            const newValues = { $set: { watched_movie : watched_movie } }
+            await db.collection("Record").updateOne(
+                query,
+                newValues)
+            res.status(200).json({ status: 200, message: "success", data: await db.collection("Record").findOne(query)});
+        }
+            client.close();
+            console.log("disconnected!");
+    }  catch (err) {
+            res.status(404).json({ status: 404, message: err.stack });
+        }
+}
+//-----------------------------------------------------
+
+//update watched movie list
+const patchWatchedMovie = async (req,res) => {
+    let {movie_id,user_id} = req.body
+    try {
+        const client = new MongoClient(MONGO_URI, options);
+        await client.connect();
+        const db = client.db("Popcorn");
+        console.log("connected!");
+        const query = {user_id : user_id };
+        const {watched_movie} = await db.collection("Record").findOne(query)
+        console.log(watched_movie)
+        let data = watched_movie.filter(object => {
+            return !(object== movie_id);
+        });
+        const newValues = { $set: { watched_movie : data } }
+        await db.collection("Record").updateOne(
+            query,
+            newValues)
+        res.status(200).json({ status: 200, message: "success", data: await db.collection("Record").findOne(query) 
+    });
+            client.close();
+            console.log("disconnected!");
+    }  catch (err) {
+            res.status(404).json({ status: 404, message: err.stack });
+        }
+}
+//-----------------------------------------------------
+
+//get filtered movie
+const getFilteredMovie = async (req,res) => {
+
+    try {
+        let {genres} = req.params
+        let result = []
+        let requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };   
+        for (let page = 1; page <= 50; page++) {
+            let movies = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=b2f7fd90221fb42dc91643e47e29b782&language=en-US&page=${page}`, requestOptions)
+            movies = await movies.text()
+            movies = JSON.parse(movies)
+            let array = movies.results
+            array.forEach(element => {
+            result.push(element)
+                    });
+        }
+        result = result.filter(element=> element.genre_ids.includes(parseInt(genres)))
+        const randomNo = Math.floor(Math.random() * result.length)
+        result = result[randomNo]
+        res.status(200).json({ status: 200, message: "success", data: result });
+    }
+    catch (err) {
+        res.status(404).json({ status: 404, message: err.stack });
+            console.log(err.stack);
+    }   
+}
+//-----------------------------------------------------
+
+//add Rate to movies 
+const postRate = async(req,res) => {
+    try {
+        let {movie_id,user_id, rate} = req.body
+        const client = new MongoClient(MONGO_URI, options);
+        await client.connect();
+        const db = client.db("Popcorn");
+        console.log("connected!");
+
+        let rate_id = uuidv4();
+        const object = {
+            rate_id: rate_id,
+            user_id:user_id,
+            movie_id: movie_id,
+            rate: rate
+        };
+        await db.collection("Rate").insertOne(object)
+        res.status(200).json({ status: 200, message: "success", data: await db.collection("Rate").findOne({rate_id: rate_id}) });
+        client.close();
+        console.log("disconnected!");
+    }  catch (err) {
+            res.status(404).json({ status: 404, message: err.stack });
+        }
+}
+//-----------------------------------------------------
+const getRate = async(req,res) => {
+    try {
+        let {movie_id,user_id, rate} = req.query
+        const client = new MongoClient(MONGO_URI, options);
+        await client.connect();
+        const db = client.db("Popcorn");
+        console.log("connected!");
+
+        let result = await db.collection("Rate").findOne({movie_id:movie_id,user_id:user_id})
+
+        res.status(200).json({ status: 200, message: "success", data: result });
+        client.close();
+        console.log("disconnected!");
+    }  catch (err) {
+            res.status(404).json({ status: 404, message: err.stack });
+        }
+}
+const patchRate = async(req,res) => {
+    try {
+        let {movie_id,user_id, rate} = req.body
+        const client = new MongoClient(MONGO_URI, options);
+        await client.connect();
+        const db = client.db("Popcorn");
+        console.log("connected!");
+        const query = {movie_id:movie_id,user_id:user_id};
+        const newValues = { $set: { rate : rate } }
+        const update = await db.collection("Rate").updateOne(
+            query,
+            newValues)
+
+        let result = await db.collection("Rate").findOne(query)
+
+        res.status(200).json({ status: 200, message: "success", data: update });
+        client.close();
+        console.log("disconnected!");
+    }  catch (err) {
+            res.status(404).json({ status: 404, message: err.stack });
+        }
+}
 //updateUsers
 const updateUsers = async() =>{
+
     var axios = require('axios');
     try {
         const client = new MongoClient(MONGO_URI, options);
@@ -267,5 +568,15 @@ module.exports = {
     updateUsers,
     postFavMovie,
     getFavMovie,
-    patchFavMovie
+    patchFavMovie,
+    getBookmarkMovie,
+    postBookmarkMovie,
+    patchBookmarkMovie,
+    getWatchedMovie,
+    postWatchedMovie,
+    patchWatchedMovie,
+    getFilteredMovie,
+    postRate,
+    getRate,
+    patchRate
 };

@@ -7,6 +7,7 @@ const SearchBar = () => {
     const [input,setInput] = useState (null);
     const [search,setSearch] = useState (null);
     const navigate = useNavigate()
+    //fetching movies' data to return appropriate results as the users type in the search bar
     useEffect (() => {
     fetch(`/search?text=${input}`)
         .then(res => res.json())    

@@ -27,7 +27,8 @@ const {
     getFilteredMovie,
     getRate,
     postRate,
-    patchRate
+    patchRate,
+    deleteRate
 } = require("./handlers");
 
 
@@ -72,6 +73,7 @@ express()
     .get("/get-rate",getRate)
     .post ("/add-rate",postRate)
     .patch ("/update-rate",patchRate)
+    .delete("/delete-rate",deleteRate)
     // ---------------------------------
 
     // this is our catch all endpoint.

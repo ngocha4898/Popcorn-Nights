@@ -7,8 +7,8 @@ import {useParams} from "react-router-dom";
 const CastPage = () => {
     let today = new Date();
     const person_id = useParams().CastId
-    const [cast,setCast] = useState (null);
-    const navigate = useNavigate()
+    const [cast,setCast] = useState (null); 
+    //getting cast's information
     useEffect (() => {
     fetch(`/Cast/${person_id}`)
         .then(res => res.json())    
@@ -29,7 +29,8 @@ return (
                     <p><p className="subtitle">Popularity:</p> {cast.data.popularity}</p> 
                     <p><p className="subtitle"> Gender:</p> {(cast.data.gender==1)?"Female":"Male"}</p>
                     <p className="subtitle"> Birthday:</p> 
-                        {               
+                        {   
+                            //condition whether the actor has their birthday information in the database or not            
                             cast.data.birthday
                             ?<p className="inline">{cast.data.birthday} ({today.getFullYear()-cast.data.birthday.substring(0,4)+ " years old"})</p>
                             :"" 

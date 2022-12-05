@@ -10,14 +10,14 @@ const FilteredBox = () => {
     const [genreID,setGenreID] = useState (null); 
     const [movie, setMovie] = useState(null)
     const [genres,setGenres] = useState (null); 
-    
+    //fetching movies' genre data 
     useEffect (() => {
         fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=b2f7fd90221fb42dc91643e47e29b782&language=en-US`)
             .then(res => res.json())    
             .then((data) => setState(data.genres))    
             .catch((error) => {console.log(error)})    
     },[]);
-    
+    //getting movie by its genre id
     useEffect (() => {
         fetch(`/filter/${genreID}`)
             .then(res => res.json())    
@@ -48,11 +48,12 @@ const FilteredBox = () => {
                 {!movie
                 ? <></> 
                 : 
-                <div className="result pointer" onClick={()=> navigate(`/Movie/${movie.id}`)}>
+                <div className="result pointer" onClick={()=> navigate(`/Movie/${movie.id}`)}> 
                 <img src={"https://image.tmdb.org/t/p/original"+ movie.backdrop_path}/>
                 <p className="movie-title" > {movie.original_title}</p>
                 <p> {moment(movie.release_date).format('YYYY')}</p>
                 {
+                    //finding movie by its genre id
                     movie?.genre_ids.map(element=>{
                         let result = state.find(genre=>genre.id==element)
                         return (

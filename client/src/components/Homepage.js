@@ -12,6 +12,7 @@ const Homepage = () => {
     const navigate = useNavigate()
     const page = Math.floor(Math.random() * 5+1)
     useEffect (() => {
+    //fetching movies
     fetch(`/api/?page=${page}`)
         .then(res => res.json())    
         .then((data) => {setState(data);})    
@@ -20,7 +21,6 @@ const Homepage = () => {
 
     return (
         <StyledHome>
-        {/* <SearchBar/>  */}
 
         <div>
         {

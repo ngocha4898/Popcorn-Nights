@@ -5,15 +5,6 @@ import styled from "styled-components";
 
 const Profile = () => {
     const { user, isAuthenticated, isLoading } = useAuth0();
-    const [favmovie,setFavMovie] = useState (null);
-    // const navigate = useNavigate()
-    useEffect (() => {
-    fetch(`/get-fav-movie/${user?.sub}`)
-        .then(res => res.json())    
-        .then((data) => {setFavMovie(data.data);})    
-        .catch((error) => {console.log(error)}) 
-    },[user?.sub]);
-
 
     if (isLoading) {
         return <div>Loading ...</div>;

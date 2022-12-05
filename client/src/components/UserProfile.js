@@ -133,7 +133,7 @@ h3{
 }
 .ava{
     border-radius: 250px;
-    width: 30%;
+    width: 120px;
     position: relative;
     top: 30px;
 }
@@ -162,8 +162,8 @@ img {
 }
 .user-name{
     position: relative;
-    left: 5%;
-    top: -5%;
+    left: 40%;
+    top: 2%;
 }
 .user-list{
     position: relative;

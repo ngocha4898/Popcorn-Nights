@@ -146,6 +146,7 @@ const MoviePage = () => {
                                 if (watchlist)
                                 {
                                     sendRequest("/update-watched-movie",movie_id,user?.sub,"PATCH")
+                                    sendRequest("/delete-rate",movie_id,user?.sub,"DELETE")
                                     setWatchList(false)
                                 }
                                 else 

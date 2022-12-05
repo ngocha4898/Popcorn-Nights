@@ -474,6 +474,8 @@ const postRate = async(req,res) => {
         }
 }
 //-----------------------------------------------------
+
+//get Rate to movies 
 const getRate = async(req,res) => {
     try {
         let {movie_id,user_id, rate} = req.query
@@ -491,6 +493,9 @@ const getRate = async(req,res) => {
             res.status(404).json({ status: 404, message: err.stack });
         }
 }
+//-----------------------------------------------------
+
+//update Rate to movies 
 const patchRate = async(req,res) => {
     try {
         let {movie_id,user_id, rate} = req.body
@@ -513,6 +518,27 @@ const patchRate = async(req,res) => {
             res.status(404).json({ status: 404, message: err.stack });
         }
 }
+//-----------------------------------------------------
+
+//delete Rate to movies 
+const deleteRate = async(req,res) => {
+    try {
+        let {movie_id,user_id} = req.body
+        const client = new MongoClient(MONGO_URI, options);
+        await client.connect();
+        const db = client.db("Popcorn");
+        console.log("connected!");
+        const query = {movie_id:movie_id,user_id:user_id};
+        const deleteRecord = await db.collection("Rate").deleteOne({movie_id:movie_id,user_id:user_id})
+        res.status(200).json({ status: 200, message: "success", data:deleteRecord});
+        client.close();
+        console.log("disconnected!");
+    }  catch (err) {
+            res.status(404).json({ status: 404, message: err.stack });
+        }
+}
+//-----------------------------------------------------
+
 //updateUsers
 const updateUsers = async() =>{
 
@@ -578,5 +604,6 @@ module.exports = {
     getFilteredMovie,
     postRate,
     getRate,
-    patchRate
+    patchRate,
+    deleteRate
 };
